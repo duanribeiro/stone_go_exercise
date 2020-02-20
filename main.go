@@ -1,5 +1,9 @@
 package main
 
+/*
+	This is the main API file. Here are shown the routes and the methods they call.
+*/
+
 import (
 	"encoding/json"
 	"io/ioutil"
@@ -12,16 +16,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-
-type Account struct {
-	ID string `json:"id"`
-	Name string `json:"name"`
-	Cpf string `json:"cpf"`
-	Balance float64 `json:"balance"`
-	CreatedAt string `json:"created_at"`
-}
-
-
 type Transfer struct {
 	ID string `json:"id"`
 	AccountOriginId string `json:"account_origin_id"`
@@ -32,31 +26,42 @@ type Transfer struct {
 
 type allTranfers []Transfer
 var tranfers = allTranfers{}
+
+type Account struct {
+	ID string `json:"id"`
+	Name string `json:"name"`
+	Cpf string `json:"cpf"`
+	Balance float64 `json:"balance"`
+	CreatedAt string `json:"created_at"`
+}
+
 type allAccounts []Account
+
+// I will use a list to make the database function.
 var accounts = allAccounts{
 	{
 		ID: "1",
 		Name: "Pedro Bala",
 		Cpf: "370.986.547-65",
 		Balance: 1000,
-		CreatedAt: "01-01-2020",
+		CreatedAt: "2020-01-01",
 	},
 	{
 		ID: "2",
 		Name: "Capitu",
 		Cpf: "147.258.896-35",
 		Balance: 2000,
-		CreatedAt: "02-02-2020",
+		CreatedAt: "2020-02-02",
 	},
 }
 
-
+/* Get the list of accounts */
 func getAccounts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(accounts)
 }
 
-
+/* Create a account */
 func createAccount(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var account Account
@@ -90,7 +95,7 @@ func createAccount(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&account)
 }
 
-
+/* Get the account balance */
 func getAccountBalance(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -103,7 +108,10 @@ func getAccountBalance(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&Account{})
 }
 
-
+/*
+	Transfers from one Account to another.
+	If the source Account has no balance, return an appropriate error code.
+*/
 func postTransfer(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var transfer Transfer
@@ -148,6 +156,7 @@ func postTransfer(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(transfer)
 }
 
+/* Get the list of transfers */
 func getTranfers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(tranfers)
@@ -157,6 +166,7 @@ func getTranfers(w http.ResponseWriter, r *http.Request) {
 func main() {
 	router := mux.NewRouter()
 
+	// ROUTES
 	router.HandleFunc("/accounts", getAccounts).Methods("GET")
 	router.HandleFunc("/accounts/{id}/balance", getAccountBalance).Methods("GET")
 	router.HandleFunc("/accounts", createAccount).Methods("POST")
