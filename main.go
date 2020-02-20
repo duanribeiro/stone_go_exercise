@@ -61,9 +61,11 @@ func getAccounts(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(accounts)
 }
 
+
 /* Create a account */
 func createAccount(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
 	var account Account
 	reqBody, err := ioutil.ReadAll(r.Body)
 
@@ -92,6 +94,7 @@ func createAccount(w http.ResponseWriter, r *http.Request) {
 	account.CreatedAt = currentTime.Format("2006-01-02")
 
 	accounts = append(accounts, account)
+	w.WriteHeader(201)
 	json.NewEncoder(w).Encode(&account)
 }
 
