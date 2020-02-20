@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
+	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -77,9 +78,18 @@ func getAccountBalance(w http.ResponseWriter, r *http.Request) {
 
 func postTransfer(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	body = json.NewDecoder(r.Body).Decode(&account)
+	var transfer Transfer
+	reqBody, _ := ioutil.ReadAll(r.Body)
+	json.Unmarshal(reqBody, &transfer)
 
-	json.NewEncoder(w).Encode(posts)
+	for _, account := range accounts {
+		if account.ID == transfer.AccountDestinationId {
+			account.Balance = account.Balance + transfer.Amount
+		} else if account.ID == transfer.AccountOriginId {
+			account.Balance = account.Balance - transfer.Amount
+		}
+	}
+	json.NewEncoder(w).Encode(transfer)
 }
 
 
@@ -89,6 +99,7 @@ func main() {
 	router.HandleFunc("/accounts", getAccounts).Methods("GET")
 	router.HandleFunc("/accounts/{id}/balance", getAccountBalance).Methods("GET")
 	router.HandleFunc("/accounts", createAccount).Methods("POST")
+
 	router.HandleFunc("/tranfers", postTransfer).Methods("POST")
 
 	http.ListenAndServe(":8000", router)
