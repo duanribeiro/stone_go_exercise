@@ -1,7 +1,7 @@
 package main
 
 /*
-	This is the main API file. Here are shown the routes and the methods they call.
+This is the main API file. Here are shown the routes and the methods they call.
 */
 
 import (
@@ -112,8 +112,8 @@ func getAccountBalance(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Transfers from one Account to another.
-	If the source Account has no balance, return an appropriate error code.
+Transfers from one Account to another.
+If the source Account has no balance, return an appropriate error code.
 */
 func postTransfer(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
