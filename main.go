@@ -156,6 +156,8 @@ func postTransfer(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	tranfers = append(tranfers, transfer)
+
+	w.WriteHeader(201)
 	json.NewEncoder(w).Encode(transfer)
 }
 
